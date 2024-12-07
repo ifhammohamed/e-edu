@@ -7,8 +7,9 @@ buildscript {
         compileSdkVersion = Integer.parseInt(findProperty('android.compileSdkVersion') ?: '35')
         targetSdkVersion = Integer.parseInt(findProperty('android.targetSdkVersion') ?: '34')
         kotlinVersion = findProperty('android.kotlinVersion') ?: '1.9.24'
+        googlePlayServicesAuthVersion = '20.7.0' // <--- use this version or newer
 
-        ndkVersion = "26.1.10909125"
+        ndkVersion = '26.1.10909125'
     }
     repositories {
         google()
@@ -18,10 +19,11 @@ buildscript {
         classpath('com.android.tools.build:gradle')
         classpath('com.facebook.react:react-native-gradle-plugin')
         classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')
+        classpath('com.google.gms:google-services:4.4.0') // <--- use this version or newer
     }
 }
 
-apply plugin: "com.facebook.react.rootproject"
+apply plugin: 'com.facebook.react.rootproject'
 
 allprojects {
     repositories {
