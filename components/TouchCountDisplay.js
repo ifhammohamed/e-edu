@@ -1,6 +1,6 @@
 // src/components/TouchCountDisplay.js
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { useTouchCount } from "../context/TouchCountContext";
 
 const TouchCountDisplay = () => {

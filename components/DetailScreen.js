@@ -1,8 +1,8 @@
 import React from "react";
-import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { Card, Title, Paragraph, Divider } from "react-native-paper";
-import { useTouchCount } from "../context/TouchCountContext";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Card, Divider, Paragraph, Title } from "react-native-paper";
 import TouchCountDisplay from "../components/TouchCountDisplay";
+import { useTouchCount } from "../context/TouchCountContext";
 const DetailScreen = ({ route }) => {
   const { item } = route.params;
   const { incrementTouchCount } = useTouchCount(); // Access increment function

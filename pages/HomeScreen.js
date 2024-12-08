@@ -1,24 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  View,
   FlatList,
-  TextInput,
   StyleSheet,
-  Text,
+  TextInput,
   TouchableOpacity,
+  View,
 } from "react-native";
-import {
-  Card,
-  Title,
-  Paragraph,
-  Button,
-  ActivityIndicator,
-} from "react-native-paper";
 import * as Animatable from "react-native-animatable";
 import InfiniteScrollView from "react-native-infinite-scroll-view";
-import apiService from "../service/apiService";
-import { useTouchCount } from "../context/TouchCountContext";
+import { ActivityIndicator, Card, Paragraph, Title } from "react-native-paper";
 import TouchCountDisplay from "../components/TouchCountDisplay";
+import { useTouchCount } from "../context/TouchCountContext";
 
 const HomeScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
@@ -135,27 +127,27 @@ const styles = StyleSheet.create({
   card: {
     marginBottom: 10,
   },
-  touchCountContainer: {
-    position: "absolute",
-    bottom: 20,
-    left: "50%",
-    transform: [{ translateX: -50 }],
-    backgroundColor: "#6200ea",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 25,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-  },
-  touchCountText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-    textTransform: "uppercase",
-    justifyContent: "center",
-  },
+  // touchCountContainer: {
+  //   position: "absolute",
+  //   bottom: 20,
+  //   left: "50%",
+  //   transform: [{ translateX: -50 }],
+  //   backgroundColor: "#6200ea",
+  //   paddingHorizontal: 20,
+  //   paddingVertical: 10,
+  //   borderRadius: 25,
+  //   shadowColor: "#000",
+  //   shadowOffset: { width: 0, height: 2 },
+  //   shadowOpacity: 0.2,
+  //   shadowRadius: 5,
+  // },
+  // touchCountText: {
+  //   color: "white",
+  //   fontSize: 16,
+  //   fontWeight: "bold",
+  //   textTransform: "uppercase",
+  //   justifyContent: "center",
+  // },
 });
 
 export default HomeScreen;
