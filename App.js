@@ -6,6 +6,7 @@ import LoginScreen from "./pages/LoginScreen.js";
 import RegisterScreen from "./pages/RegisterScreen";
 import HomeScreen from "./pages/HomeScreen";
 import DetailScreen from "./components/DetailScreen.js";
+import { TouchCountProvider } from "./context/TouchCountContext.js";
 
 const Stack = createNativeStackNavigator();
 
@@ -25,36 +26,38 @@ const theme = {
 
 export default function App() {
   return (
-    <PaperProvider theme={theme}>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Login"
-          screenOptions={{
-            headerTitleStyle: {
-              fontSize: 20,
-              fontWeight: "bold",
-              color: theme.colors.primary,
-              backgroundColor: theme.colors.background,
-            },
-            headerStyle: {
-              backgroundColor: theme.colors.background,
-            },
-          }}
-        >
-          <Stack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{ title: "E EDU Login" }}
-          />
-          <Stack.Screen name="Register" component={RegisterScreen} />
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{ title: "E EDU Home" }}
-          />
-          <Stack.Screen name="Detail" component={DetailScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
+    <TouchCountProvider>
+      <PaperProvider theme={theme}>
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName="Login"
+            screenOptions={{
+              headerTitleStyle: {
+                fontSize: 20,
+                fontWeight: "bold",
+                color: theme.colors.primary,
+                backgroundColor: theme.colors.background,
+              },
+              headerStyle: {
+                backgroundColor: theme.colors.background,
+              },
+            }}
+          >
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen}
+              options={{ title: "E EDU Login" }}
+            />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{ title: "E EDU Home" }}
+            />
+            <Stack.Screen name="Detail" component={DetailScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
+    </TouchCountProvider>
   );
 }
