@@ -1,65 +1,75 @@
-# E-Edu Project
+# E-Edu React Native Project
 
-![E-Edu Logo](https://example.com/e-edu-logo.png)
+![E-Edu Logo](./assets/logo.png)
 
 ## 📚 About
 
-E-Edu is an innovative online learning platform designed to revolutionize education through interactive and engaging digital experiences.
+E-Edu is an innovative mobile learning platform built with React Native, designed to revolutionize education through interactive and engaging digital experiences.
 
 ## 🚀 Features
 
-- 📝 Interactive Courses
-- 👥 Collaborative Learning
-- 📊 Progress Tracking
-- 🏆 Gamification Elements
-- 🌐 Multi-language Support
+- 📝 Interactive Courses using GitHub's Education API
+- 👥 User Authentication with Firebase
+- 📊 Progress Tracking with Context API
+- 🏆 Stylish UI with React Native Paper
+- 🌐 External API Integration
 
 ## 🛠️ Technologies Used
 
-- Frontend: React.js, Next.js
-- Backend: Node.js, Express
-- Database: MongoDB
-- Authentication: JWT, OAuth2.0
-- Deployment: Docker, Kubernetes
-
-## 🏗️ Architecture
-
-graph TD
-A[Client] --> B[Load Balancer]
-B --> C[Web Server]
-C --> D[Application Server]
-D --> E[Database]
-D --> F[Cache]
-D --> G[Message Queue]
+- **Frontend:** React Native
+- **UI Library:** React Native Paper
+- **State Management:** Context API
+- **Authentication:** Firebase
+- **API:** GitHub Education API
+- **API Service:** Custom fetch wrapper
 
 ## 🚦 Getting Started
 
-1. Clone the repository
+1. **Clone the repository**
 
-   git clone https://github.com/yourusername/e-edu.git
+   ```bash
+   git clone https://github.com/ifhammohamed/e-edu
+   ```
 
-2. Install dependencies
+2. **Install dependencies**
 
-   cd e-edu
+   ```bash
+   cd e-edu-react-native
    npm install
+   ```
 
-3. Set up environment variables
+3. **Set up environment variables**
 
-   cp .env.example .env
+   Create a `.env` file in the root directory and add the following Firebase configuration:
 
-4. Run the development server
+   ```env
+   FIREBASE_API_KEY=YOUR_FIREBASE_API_KEY
+   FIREBASE_AUTH_DOMAIN=YOUR_FIREBASE_AUTH_DOMAIN
+   FIREBASE_PROJECT_ID=YOUR_FIREBASE_PROJECT_ID
+   FIREBASE_STORAGE_BUCKET=YOUR_FIREBASE_STORAGE_BUCKET
+   FIREBASE_MESSAGING_SENDER_ID=YOUR_FIREBASE_MESSAGING_SENDER_ID
+   FIREBASE_APP_ID=YOUR_FIREBASE_APP_ID
+   ```
 
-   npm run dev
+4. **Run the development server**
+
+   ```bash
+   npx react-native run-android
+   # or
+   npx react-native run-ios
+   ```
 
 ## 🧪 Testing
 
 Run the test suite with:
 
+```bash
 npm test
+```
 
 ## 📦 Deployment
 
-Detailed deployment instructions can be found in [DEPLOYMENT.md](DEPLOYMENT.md).
+Detailed deployment instructions for Android and iOS can be found in [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## 🤝 Contributing
 
@@ -75,4 +85,4 @@ For any queries, please reach out to us at support@e-edu.com.
 
 ---
 
-Made with ❤️ by the E-Edu Team
+Made with ❤️ by Ifham
