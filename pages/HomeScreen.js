@@ -17,6 +17,9 @@ import {
 import * as Animatable from "react-native-animatable";
 import InfiniteScrollView from "react-native-infinite-scroll-view";
 import apiService from "../service/apiService";
+import { useTouchCount } from "../context/TouchCountContext";
+import TouchCountDisplay from "../components/TouchCountDisplay";
+
 const HomeScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -24,6 +27,7 @@ const HomeScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [howManyCountTouched, setHowManyCountTouched] = useState(0);
+  const { incrementTouchCount } = useTouchCount(); // Access increment function
 
   useEffect(() => {
     fetchData();
@@ -57,6 +61,7 @@ const HomeScreen = ({ navigation }) => {
           style={styles.card}
           onPress={() => {
             handleTouchCount();
+            incrementTouchCount();
             navigation.navigate("Detail", { item });
           }}
         >
@@ -97,7 +102,7 @@ const HomeScreen = ({ navigation }) => {
       />
 
       {/* Touch Count Display */}
-      <View style={styles.touchCountContainer}>
+      {/* <View style={styles.touchCountContainer}>
         <Animatable.Text
           animation="pulse"
           iterationCount="infinite"
@@ -105,6 +110,11 @@ const HomeScreen = ({ navigation }) => {
         >
           Touched {howManyCountTouched} times
         </Animatable.Text>
+      </View> */}
+
+      {/* Touch Count Button */}
+      <View>
+        <TouchCountDisplay />
       </View>
     </View>
   );
