@@ -7,10 +7,11 @@ import RegisterScreen from "./pages/RegisterScreen";
 import HomeScreen from "./pages/HomeScreen";
 import DetailScreen from "./components/DetailScreen.js";
 import { TouchCountProvider } from "./context/TouchCountContext.js";
+import { UserProvider, useUser } from "./context/UserContext";
+import { View, Text } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
-// Define a custom theme
 const theme = {
   ...DefaultTheme,
   colors: {
@@ -24,40 +25,60 @@ const theme = {
   },
 };
 
+const HeaderRight = () => {
+  const { userEmail } = useUser();
+  console.log("🚀 ~ HeaderRight ~ userEmail:", userEmail);
+  return (
+    <View style={{ marginRight: 10 }}>
+      <Text style={{ color: theme.colors.primary, fontSize: 14 }}>
+        {userEmail}
+      </Text>
+    </View>
+  );
+};
+
 export default function App() {
   return (
-    <TouchCountProvider>
-      <PaperProvider theme={theme}>
-        <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName="Login"
-            screenOptions={{
-              headerTitleStyle: {
-                fontSize: 20,
-                fontWeight: "bold",
-                color: theme.colors.primary,
-                backgroundColor: theme.colors.background,
-              },
-              headerStyle: {
-                backgroundColor: theme.colors.background,
-              },
-            }}
-          >
-            <Stack.Screen
-              name="Login"
-              component={LoginScreen}
-              options={{ title: "E EDU Login" }}
-            />
-            <Stack.Screen name="Register" component={RegisterScreen} />
-            <Stack.Screen
-              name="Home"
-              component={HomeScreen}
-              options={{ title: "E EDU Home" }}
-            />
-            <Stack.Screen name="Detail" component={DetailScreen} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </PaperProvider>
-    </TouchCountProvider>
+    <UserProvider>
+      <TouchCountProvider>
+        <PaperProvider theme={theme}>
+          <NavigationContainer>
+            <Stack.Navigator
+              initialRouteName="Login"
+              screenOptions={{
+                headerTitleStyle: {
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: theme.colors.primary,
+                },
+                headerStyle: {
+                  backgroundColor: theme.colors.background,
+                },
+              }}
+            >
+              <Stack.Screen
+                name="Login"
+                component={LoginScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Register"
+                component={RegisterScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Home"
+                component={HomeScreen}
+                options={{
+                  title: "E EDU Home",
+                  headerRight: () => <HeaderRight />,
+                }}
+              />
+              <Stack.Screen name="Detail" component={DetailScreen} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </PaperProvider>
+      </TouchCountProvider>
+    </UserProvider>
   );
 }
