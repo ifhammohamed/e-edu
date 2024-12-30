@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
   Image,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Platform,
   ScrollView,
+  Platform,
+  Animated,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -20,8 +21,8 @@ import {
   TextInput,
   Button,
   Title,
-  ActivityIndicator,
   Dialog,
+  Portal,
 } from "react-native-paper";
 
 export default function RegisterScreen({ navigation }) {
@@ -31,7 +32,27 @@ export default function RegisterScreen({ navigation }) {
     formState: { errors },
   } = useForm();
   const [loading, setLoading] = useState(false);
-  const [successDialog, setSuccessDialog] = React.useState(false);
+  const [successDialog, setSuccessDialog] = useState(false);
+
+  // Animation values
+  const fadeAnim = new Animated.Value(0);
+  const slideAnim = new Animated.Value(50);
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
   const showDialog = () => setSuccessDialog(true);
   const hideDialog = () => setSuccessDialog(false);
 
@@ -50,7 +71,7 @@ export default function RegisterScreen({ navigation }) {
       });
 
       showDialog();
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       navigation.navigate("Login");
     } catch (error) {
       console.error(error.message);
@@ -63,127 +84,160 @@ export default function RegisterScreen({ navigation }) {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Image source={require("../assets/logo.png")} style={styles.image} />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Animated.View
+          style={[
+            styles.animatedContainer,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
+          <Image source={require("../assets/logo.png")} style={styles.image} />
 
-        <View style={styles.signInContainer}>
-          <Title style={styles.title}>Register</Title>
+          <View style={styles.signInContainer}>
+            <Title style={styles.title}>Create Account</Title>
 
-          {/* Name Field */}
-          <Controller
-            control={control}
-            name="name"
-            rules={{ required: "Name is required" }}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={styles.input}
-                label="Name"
-                mode="outlined"
-                onChangeText={onChange}
-                value={value}
-                error={!!errors.name}
-              />
-            )}
-          />
-          {errors.name && (
-            <Text style={styles.error}>{errors.name.message}</Text>
-          )}
-
-          {/* Email Field */}
-          <Controller
-            control={control}
-            name="email"
-            rules={{
-              required: "Email is required",
-              pattern: { value: /^\S+@\S+$/i, message: "Enter a valid email" },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={styles.input}
-                label="Email"
-                mode="outlined"
-                onChangeText={onChange}
-                value={value}
-                error={!!errors.email}
-              />
-            )}
-          />
-          {errors.email && (
-            <Text style={styles.error}>{errors.email.message}</Text>
-          )}
-
-          {/* Password Field */}
-          <Controller
-            control={control}
-            name="password"
-            rules={{
-              required: "Password is required",
-              minLength: {
-                value: 6,
-                message: "Password must be at least 6 characters",
-              },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={styles.input}
-                label="Password"
-                mode="outlined"
-                secureTextEntry
-                onChangeText={onChange}
-                value={value}
-                error={!!errors.password}
-              />
-            )}
-          />
-          {errors.password && (
-            <Text style={styles.error}>{errors.password.message}</Text>
-          )}
-
-          {/* Submit Button */}
-          <TouchableOpacity onPress={handleSubmit(onSubmit)} disabled={loading}>
-            <Button mode="contained" style={styles.button}>
-              {loading ? (
-                <ActivityIndicator animating={true} color="#fff" />
-              ) : (
-                "Sign Up"
+            {/* Name Field */}
+            <Controller
+              control={control}
+              name="name"
+              rules={{ required: "Name is required" }}
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => (
+                <View>
+                  <TextInput
+                    label="Full Name"
+                    mode="outlined"
+                    style={styles.input}
+                    onChangeText={onChange}
+                    value={value}
+                    error={!!error}
+                    left={<TextInput.Icon icon="account" />}
+                  />
+                  {error && (
+                    <Text style={styles.errorText}>{error.message}</Text>
+                  )}
+                </View>
               )}
-            </Button>
-          </TouchableOpacity>
+            />
 
-          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-            <Button mode="outlined" style={styles.Registorbutton}>
-              Login
-            </Button>
-          </TouchableOpacity>
+            {/* Email Field */}
+            <Controller
+              control={control}
+              name="email"
+              rules={{
+                required: "Email is required",
+                pattern: {
+                  value: /^\S+@\S+$/i,
+                  message: "Please enter a valid email",
+                },
+              }}
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => (
+                <View>
+                  <TextInput
+                    label="Email"
+                    mode="outlined"
+                    style={styles.input}
+                    onChangeText={onChange}
+                    value={value}
+                    error={!!error}
+                    left={<TextInput.Icon icon="email" />}
+                  />
+                  {error && (
+                    <Text style={styles.errorText}>{error.message}</Text>
+                  )}
+                </View>
+              )}
+            />
 
-          <Dialog
-            visible={successDialog}
-            onDismiss={hideDialog}
-            style={styles.dialog}
-          >
-            <Dialog.Icon icon="check-circle" size={30} color="#4CAF50" />
-            <Dialog.Title style={styles.dialogTitle}>
-              Registration Successful
-            </Dialog.Title>
-            <Dialog.Content>
-              <Text style={styles.dialogContent}>
-                Your account has been created successfully! You can now log in
-                and start using MovieCatch.
-              </Text>
-            </Dialog.Content>
-            <Dialog.Actions>
-              <Button
-                mode="contained"
-                onPress={hideDialog}
-                style={styles.dialogButton}
-              >
-                Continue
+            {/* Password Field */}
+            <Controller
+              control={control}
+              name="password"
+              rules={{
+                required: "Password is required",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters",
+                },
+              }}
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => (
+                <View>
+                  <TextInput
+                    label="Password"
+                    mode="outlined"
+                    secureTextEntry
+                    style={styles.input}
+                    onChangeText={onChange}
+                    value={value}
+                    error={!!error}
+                    left={<TextInput.Icon icon="lock" />}
+                  />
+                  {error && (
+                    <Text style={styles.errorText}>{error.message}</Text>
+                  )}
+                </View>
+              )}
+            />
+
+            <TouchableOpacity
+              onPress={handleSubmit(onSubmit)}
+              disabled={loading}
+              style={styles.registerButton}
+            >
+              <Button mode="contained" loading={loading} style={styles.button}>
+                Create Account
               </Button>
-            </Dialog.Actions>
-          </Dialog>
-        </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Login")}
+              style={styles.loginButton}
+            >
+              <Button mode="outlined">Already have an account? Sign In</Button>
+            </TouchableOpacity>
+
+            <Portal>
+              <Dialog
+                visible={successDialog}
+                onDismiss={hideDialog}
+                style={styles.dialog}
+              >
+                <Dialog.Icon icon="check-circle" size={30} color="#4CAF50" />
+                <Dialog.Title style={styles.dialogTitle}>
+                  Registration Successful
+                </Dialog.Title>
+                <Dialog.Content>
+                  <Text style={styles.dialogContent}>
+                    Your account has been created successfully! You can now sign
+                    in to access your account.
+                  </Text>
+                </Dialog.Content>
+                <Dialog.Actions>
+                  <Button
+                    mode="contained"
+                    onPress={hideDialog}
+                    style={styles.dialogButton}
+                  >
+                    Continue to Login
+                  </Button>
+                </Dialog.Actions>
+              </Dialog>
+            </Portal>
+          </View>
+        </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -194,8 +248,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
-  scrollContent: {
+  scrollContainer: {
     flexGrow: 1,
+    justifyContent: "center",
+  },
+  animatedContainer: {
+    flex: 1,
     justifyContent: "center",
   },
   signInContainer: {
@@ -206,16 +264,21 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     padding: 20,
     backgroundColor: "#f5f5f5",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
   },
   image: {
-    // width: 100,
-    // height: 100,
     alignSelf: "center",
-    // borderRadius: 50,
     marginBottom: 20,
   },
   title: {
-    fontSize: 30,
+    fontSize: 32,
     textAlign: "center",
     marginBottom: 30,
     color: "#5A4AF4",
@@ -223,17 +286,28 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 15,
+    backgroundColor: "#ffffff",
+  },
+  errorText: {
+    color: "#FF0000",
+    fontSize: 12,
+    marginTop: -10,
+    marginBottom: 10,
+    marginLeft: 5,
   },
   button: {
     marginVertical: 10,
+    borderRadius: 8,
+    paddingVertical: 8,
   },
-  error: {
-    color: "red",
-    marginBottom: 10,
-    fontSize: 12,
+  registerButton: {
+    marginTop: 10,
+  },
+  loginButton: {
+    marginTop: 10,
   },
   dialog: {
-    borderRadius: 8,
+    borderRadius: 12,
     backgroundColor: "#fefefe",
   },
   dialogTitle: {
@@ -250,9 +324,10 @@ const styles = StyleSheet.create({
   },
   dialogButton: {
     alignSelf: "center",
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#5A4AF4",
     borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 8,
+    marginBottom: 10,
   },
 });
