@@ -1,80 +1,47 @@
 import React from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Card, Divider, Paragraph, Title } from "react-native-paper";
-import TouchCountDisplay from "../components/TouchCountDisplay";
+import { ScrollView, StyleSheet, View } from "react-native";
+import * as Animatable from "react-native-animatable";
 import { useTouchCount } from "../context/TouchCountContext";
+import TouchCountDisplay from "../components/TouchCountDisplay";
+import { DetailHeader } from "../components/DetailScreen/DetailHeader";
+import { DetailContent } from "../components/DetailScreen/DetailContent";
+import { theme } from "../theme";
+
 const DetailScreen = ({ route }) => {
   const { item } = route.params;
-  const { incrementTouchCount } = useTouchCount(); // Access increment function
-
-  console.log("🚀 ~ DetailScreen ~ item:", item);
-
-  // Validate and extract data
-  const school = item?.school || {};
-  const student = item?.student || {};
-  const latest = item?.latest || {};
+  const { incrementTouchCount } = useTouchCount();
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <TouchableOpacity>
-          <Card
-            style={styles.card}
-            onPress={() => {
-              incrementTouchCount();
-            }}
-          >
-            <Card.Content>
-              <Title>{school.name || "School Name Not Available"}</Title>
-              <Paragraph>
-                {school.city}, {school.state}
-              </Paragraph>
-              <Paragraph>{school.address || "Address Not Available"}</Paragraph>
-              <Paragraph>
-                Student Size: {student.size || "Not Available"}
-              </Paragraph>
-              <Paragraph>
-                Website: {school.school_url || "Website Not Available"}
-              </Paragraph>
-              <Divider style={styles.divider} />
-              <Title>Latest Details</Title>
-              {latest.academics?.program && (
-                <Paragraph>
-                  Academic Program: {latest.academics.program.name || "N/A"}
-                </Paragraph>
-              )}
-              {latest.admissions && (
-                <Paragraph>
-                  Admission Rate:{" "}
-                  {latest.admissions.admission_rate?.overall
-                    ? `${(
-                        latest.admissions.admission_rate.overall * 100
-                      ).toFixed(2)}%`
-                    : "N/A"}
-                </Paragraph>
-              )}
-              {latest.aid && (
-                <Paragraph>
-                  Federal Loan Rate:{" "}
-                  {latest.aid.federal_loan_rate
-                    ? `${(latest.aid.federal_loan_rate * 100).toFixed(2)}%`
-                    : "N/A"}
-                </Paragraph>
-              )}
-              {latest.earnings && (
-                <Paragraph>
-                  Median Earnings 6 Years After Entry:{" "}
-                  {latest.earnings["6_yrs_after_entry"]?.median || "N/A"}
-                </Paragraph>
-              )}
-            </Card.Content>
-          </Card>
-        </TouchableOpacity>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <DetailHeader
+          imageUrl={item.simple_thumb}
+          title={item.title}
+          author={item.author}
+          genre={item.genre}
+          epoch={item.epoch}
+        />
+
+        <DetailContent
+          kind={item.kind}
+          url={item.url}
+          fullSortKey={item.full_sort_key}
+          onIncrementTouch={incrementTouchCount}
+        />
       </ScrollView>
 
-      <View style={{ position: "absolute", bottom: 10, right: 10 }}>
+      <Animatable.View
+        animation="bounceIn"
+        duration={1500}
+        style={styles.touchCountWrapper}
+      >
         <TouchCountDisplay />
-      </View>
+      </Animatable.View>
     </View>
   );
 };
@@ -82,13 +49,21 @@ const DetailScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
   },
-  card: {
-    marginVertical: 10,
+  scrollContent: {
+    flexGrow: 1,
+    paddingTop: theme.spacing.lg,
+    paddingBottom: theme.spacing.xl,
   },
-  divider: {
-    marginVertical: 10,
+  touchCountWrapper: {
+    position: "absolute",
+    bottom: theme.spacing.lg,
+    right: theme.spacing.lg,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });
 
