@@ -5,6 +5,7 @@ import { useTouchCount } from "../context/TouchCountContext";
 
 const TouchCountDisplay = () => {
   const { touchCount } = useTouchCount();
+  console.log("🚀 ~ TouchCountDisplay ~ touchCount:", touchCount);
 
   return (
     <View style={styles.floatingButton}>
