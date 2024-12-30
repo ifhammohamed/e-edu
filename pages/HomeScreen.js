@@ -5,34 +5,36 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Image,
+  Text,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
-import InfiniteScrollView from "react-native-infinite-scroll-view";
-import { ActivityIndicator, Card, Paragraph, Title } from "react-native-paper";
-import TouchCountDisplay from "../components/TouchCountDisplay";
+import { ActivityIndicator } from "react-native-paper";
 import { useTouchCount } from "../context/TouchCountContext";
-
+import { theme } from "../theme";
+import TouchCountDisplay from "../components/TouchCountDisplay";
 const HomeScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(20);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [howManyCountTouched, setHowManyCountTouched] = useState(0);
-  const { incrementTouchCount } = useTouchCount(); // Access increment function
+  const { incrementTouchCount } = useTouchCount();
 
   useEffect(() => {
     fetchData();
-  }, [page, searchQuery, perPage]);
+  }, [page, searchQuery]);
 
   const fetchData = async () => {
     setIsLoading(true);
-    // Fetch data from API based on page and searchQuery
-    const response = await fetch(
-      `https://api.data.gov/ed/collegescorecard/v1/schools?api_key=R7JFUQhojHbNwMnx2U4P3PtYZVRVcvIzSJwCs6EE&page=${page}&per_page=${perPage}`
-    );
-    const result = await response.json();
-    setData((prevData) => [...prevData, ...result.results]);
+    try {
+      const response = await fetch(
+        `https://wolnelektury.pl/api/authors/adam-mickiewicz/kinds/liryka/parent_books/`
+      );
+      const result = await response.json();
+      setData((prevData) => [...prevData, ...result]);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
     setIsLoading(false);
   };
 
@@ -42,72 +44,57 @@ const HomeScreen = ({ navigation }) => {
     setData([]);
   };
 
-  const handleTouchCount = () => {
-    setHowManyCountTouched((prevCount) => prevCount + 1);
-  };
-
   const renderItem = ({ item }) => (
-    <Animatable.View animation="fadeInUp" duration={800}>
-      <TouchableOpacity>
-        <Card
-          style={styles.card}
-          onPress={() => {
-            handleTouchCount();
-            incrementTouchCount();
-            navigation.navigate("Detail", { item });
-          }}
-        >
-          <Card.Content>
-            <Title>{item.school.name}</Title>
-            <Paragraph>
-              {item.school.city}, {item.school.state}
-            </Paragraph>
-          </Card.Content>
-        </Card>
+    <Animatable.View animation="fadeInUp" duration={800} style={styles.card}>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("Detail", { item });
+          incrementTouchCount();
+        }}
+      >
+        <View style={styles.cardContent}>
+          <Image source={{ uri: item.simple_thumb }} style={styles.thumbnail} />
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.author}>{item.author}</Text>
+            <Text style={styles.details}>
+              Genre: {item.genre} | Epoch: {item.epoch}
+            </Text>
+          </View>
+        </View>
       </TouchableOpacity>
     </Animatable.View>
   );
 
   return (
     <View style={styles.container}>
+      {/* Search Bar */}
       <TextInput
         style={styles.searchBar}
         placeholder="Search..."
         value={searchQuery}
         onChangeText={handleSearch}
       />
+
+      {/* Data List */}
       <FlatList
         data={data}
         renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-        onEndReached={() => setPage((prevPage) => prevPage + 1)} // Increment page for new data
+        keyExtractor={(item, index) => `${item.slug}-${index}`}
+        onEndReached={() => setPage((prevPage) => prevPage + 1)}
         onEndReachedThreshold={0.5}
         ListFooterComponent={
           isLoading ? <ActivityIndicator size="large" /> : null
         }
-        renderScrollComponent={(props) => (
-          <InfiniteScrollView
-            {...props}
-            onLoadMoreAsync={() => setPage((prevPage) => prevPage + 1)} // Load more items here
-          />
-        )}
       />
 
-      {/* Touch Count Display */}
-      {/* <View style={styles.touchCountContainer}>
-        <Animatable.Text
-          animation="pulse"
-          iterationCount="infinite"
-          style={styles.touchCountText}
-        >
-          Touched {howManyCountTouched} times
-        </Animatable.Text>
-      </View> */}
-
-      {/* Touch Count Button */}
-      <View>
+      <Animatable.View
+        animation="bounceIn"
+        duration={1500}
+        style={styles.touchCountWrapper}
+      >
         <TouchCountDisplay />
-      </View>
+      </Animatable.View>
     </View>
   );
 };
@@ -116,38 +103,67 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    backgroundColor: "#f9f9f9",
   },
   searchBar: {
-    marginBottom: 10,
+    marginBottom: 15,
     padding: 10,
-    backgroundColor: "#fff",
-    color: "black", // Changed color to black
+    backgroundColor: "#ffffff",
     borderRadius: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
   },
   card: {
     marginBottom: 10,
+    backgroundColor: "#ffffff",
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    overflow: "hidden",
   },
-  // touchCountContainer: {
-  //   position: "absolute",
-  //   bottom: 20,
-  //   left: "50%",
-  //   transform: [{ translateX: -50 }],
-  //   backgroundColor: "#6200ea",
-  //   paddingHorizontal: 20,
-  //   paddingVertical: 10,
-  //   borderRadius: 25,
-  //   shadowColor: "#000",
-  //   shadowOffset: { width: 0, height: 2 },
-  //   shadowOpacity: 0.2,
-  //   shadowRadius: 5,
-  // },
-  // touchCountText: {
-  //   color: "white",
-  //   fontSize: 16,
-  //   fontWeight: "bold",
-  //   textTransform: "uppercase",
-  //   justifyContent: "center",
-  // },
+  cardContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  thumbnail: {
+    width: 80,
+    height: 100,
+    borderRadius: 8,
+    margin: 10,
+  },
+  textContainer: {
+    flex: 1,
+    padding: 10,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  author: {
+    fontSize: 14,
+    color: "#555",
+    marginTop: 5,
+  },
+  details: {
+    fontSize: 12,
+    color: "#777",
+    marginTop: 5,
+  },
+  touchCountWrapper: {
+    position: "absolute",
+    bottom: theme.spacing.lg,
+    right: theme.spacing.lg,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
 });
 
 export default HomeScreen;
